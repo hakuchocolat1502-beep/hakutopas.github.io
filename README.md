@@ -1,4 +1,4 @@
-# 🎵 Rhythm Game
+# Rhythm Game
 
 Pythonとpygameで制作したリズムゲームです。落ちてくるノーツを判定ラインに合わせてクリックし、スコアを競います。
 
