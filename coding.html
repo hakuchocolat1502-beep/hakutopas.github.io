@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coding — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:     #EAEFEF;
+      --sub:    #BFC9D1;
+      --dark:   #25343F;
+      --accent: #FF9B51;
+      --white:  #FAFCFC;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Cursor ── */
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s, background .2s;
+      mix-blend-mode: multiply;
+    }
+    .cursor.hovered { width: 36px; height: 36px; background: var(--dark); }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.6rem 3rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--sub);
+    }
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      letter-spacing: .08em;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2.4rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--dark);
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--accent);
+      transition: width .3s;
+    }
+    .nav-links a:hover::after,
+    .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--accent); }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 9rem 3rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: end;
+      border-bottom: 1px solid var(--sub);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header-bg-num {
+      position: absolute;
+      right: 2rem; bottom: -2rem;
+      font-family: 'DM Serif Display', serif;
+      font-size: 16rem;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(37,52,63,.07);
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+    }
+    .page-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp .5s .1s ease forwards;
+    }
+    .page-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1.05;
+      color: var(--dark);
+      opacity: 0;
+      animation: fadeUp .6s .2s ease forwards;
+    }
+    .page-title em { font-style: italic; color: var(--accent); }
+    .page-header-right {
+      opacity: 0;
+      animation: fadeUp .6s .35s ease forwards;
+    }
+    .page-header-right p {
+      font-size: .9rem;
+      line-height: 1.9;
+      opacity: .65;
+      max-width: 40ch;
+    }
+
+    /* ── Experience strip ── */
+    .experience {
+      background: var(--dark);
+      padding: 4rem 3rem;
+    }
+    .exp-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .exp-header-num {
+      font-family: 'DM Mono', monospace;
+      font-size: .6rem;
+      letter-spacing: .2em;
+      color: var(--accent);
+    }
+    .exp-header-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--white);
+    }
+    .exp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5px;
+      background: rgba(191,201,209,.15);
+    }
+    .exp-card {
+      background: var(--dark);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: background .3s;
+    }
+    .exp-card:hover { background: #2e3f4c; }
+    .exp-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--accent);
+      transition: height .35s ease;
+    }
+    .exp-card:hover::before { height: 100%; }
+    .exp-period {
+      font-family: 'DM Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .15em;
+      color: var(--accent);
+      margin-bottom: .7rem;
+    }
+    .exp-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--white);
+      margin-bottom: .6rem;
+      line-height: 1.3;
+    }
+    .exp-desc {
+      font-size: .82rem;
+      line-height: 1.8;
+      color: var(--white);
+      opacity: .55;
+      margin-bottom: 1rem;
+    }
+    .exp-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+    .exp-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: .58rem;
+      letter-spacing: .1em;
+      padding: .25rem .6rem;
+      border: 1px solid rgba(191,201,209,.25);
+      color: var(--sub);
+    }
+    .exp-tag.highlight {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── Works section ── */
+    .works {
+      padding: 5rem 3rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--sub);
+    }
+    .section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: .6rem;
+      letter-spacing: .2em;
+      color: var(--accent);
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--dark);
+    }
+
+    /* lang filter */
+    .lang-filter {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .45rem 1rem;
+      border: 1px solid var(--sub);
+      background: transparent;
+      color: var(--dark);
+      cursor: none;
+      transition: background .2s, border-color .2s, color .2s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--dark);
+      border-color: var(--dark);
+      color: var(--white);
+    }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); }
+
+    /* works grid */
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+
+    /* ── Image card (Python / Portfolio) ── */
+    .work-card {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transition: background .3s;
+      display: flex;
+      flex-direction: column;
+      outline: 1.5px solid var(--sub);
+    }
+    .work-card:hover { background: var(--white); }
+    .work-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--accent);
+      transition: height .35s;
+      z-index: 1;
+    }
+    .work-card:hover::before { height: 100%; }
+
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: var(--sub);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+    .work-card:hover .card-img-wrap img { transform: scale(1.04); }
+    .card-img-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      background: var(--sub);
+      color: var(--dark);
+      opacity: .4;
+    }
+
+    .card-body { padding: 1.6rem; flex: 1; display: flex; flex-direction: column; }
+    .card-lang {
+      font-family: 'DM Mono', monospace;
+      font-size: .58rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .6rem;
+    }
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--dark);
+      margin-bottom: .5rem;
+    }
+    .card-desc {
+      font-size: .78rem;
+      line-height: 1.75;
+      color: var(--dark);
+      opacity: .6;
+      flex: 1;
+      margin-bottom: 1.2rem;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .github-link {
+      font-family: 'DM Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--dark);
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      border-bottom: 1px solid var(--sub);
+      padding-bottom: 2px;
+      transition: border-color .2s, color .2s;
+    }
+    .github-link:hover { color: var(--accent); border-color: var(--accent); }
+    .github-link svg { transition: transform .2s; }
+    .github-link:hover svg { transform: translateX(3px); }
+
+    /* ── Terminal card (C language) ── */
+    .work-card.terminal-card { background: var(--bg); }
+    .work-card.terminal-card:hover { background: var(--white); }
+
+    .terminal-window {
+      background: #1a2630;
+      margin: 0;
+      flex-shrink: 0;
+    }
+    .terminal-bar {
+      padding: .6rem .8rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .terminal-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .terminal-dot.red    { background: #FF5F56; }
+    .terminal-dot.yellow { background: #FFBD2E; }
+    .terminal-dot.green  { background: #27C93F; }
+    .terminal-filename {
+      font-family: 'DM Mono', monospace;
+      font-size: .58rem;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.3);
+      margin-left: .4rem;
+    }
+    .terminal-body {
+      padding: 1rem 1rem 1.2rem;
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem;
+      line-height: 1.7;
+      color: #c8d8e4;
+      min-height: 110px;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 0;
+    }
+
+
+    /* hidden filter state */
+    .work-card[data-hidden] {
+      display: none;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 2.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--sub);
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--dark);
+      opacity: .4;
+    }
+    .footer-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.4rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .nav-links a { font-size: .65rem; }
+      .page-header { grid-template-columns: 1fr; gap: 1.5rem; padding: 8rem 1.5rem 3rem; }
+      .experience { padding: 3rem 1.5rem; }
+      .exp-grid { grid-template-columns: 1fr; }
+      .works { padding: 3.5rem 1.5rem; }
+      .works-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .works-grid { grid-template-columns: 1fr; }
+      .nav-links { gap: .9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="portfolio-home.html" class="nav-logo">port<span>.</span>folio</a>
+    <ul class="nav-links">
+      <li><a href="portfolio-home.html">Home</a></li>
+      <li><a href="portfolio-profile.html">Profile</a></li>
+      <li><a href="#" class="active">Coding</a></li>
+      <li><a href="#">Illustration</a></li>
+      <li><a href="#">Crafts</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page header -->
+  <header class="page-header">
+    <div>
+      <p class="page-eyebrow">✦ 03 — Programs & Projects</p>
+      <h1 class="page-title">Coding<span style="color:var(--accent)">.</span></h1>
+    </div>
+    <div class="page-header-right">
+      <p>C・Python・HTMLを中心に、気になるものを作っています。コードを書くことは、頭の中にあるものを動かすための手段です。</p>
+    </div>
+    <div class="page-header-bg-num" aria-hidden="true">03</div>
+  </header>
+
+  <!-- Experience -->
+  <section class="experience reveal" data-reveal>
+    <div class="exp-header">
+      <span class="exp-header-num">01</span>
+      <h2 class="exp-header-title">Experience</h2>
+    </div>
+    <div class="exp-grid">
+
+      <div class="exp-card">
+        <p class="exp-period">2023 —</p>
+        <h3 class="exp-title">Pythonプログラミング講師</h3>
+        <p class="exp-desc">
+          小学生を対象にPythonを教えるアルバイト。「なぜこうなるの？」という素直な疑問に答え続けることで、自分自身の理解もより深まった経験。
+        </p>
+        <div class="exp-tags">
+          <span class="exp-tag highlight">Python</span>
+          <span class="exp-tag">Teaching</span>
+          <span class="exp-tag">Education</span>
+        </div>
+      </div>
+
+      <div class="exp-card">
+        <p class="exp-period">2024</p>
+        <h3 class="exp-title">42 Tokyo — 受験</h3>
+        <p class="exp-desc">
+          エンジニア養成機関「42 Tokyo」のPiscineに参加・受験。C言語を集中的に学び、独学で問題を解き続ける経験をした。結果は不合格だったが、コーディングへの向き合い方が変わった転機。
+        </p>
+        <div class="exp-tags">
+          <span class="exp-tag highlight">C</span>
+          <span class="exp-tag">42 Tokyo</span>
+          <span class="exp-tag">Piscine</span>
+          <span class="exp-tag">Algorithm</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Works -->
+  <section class="works">
+    <div class="section-header reveal" data-reveal>
+      <span class="section-num">02</span>
+      <h2 class="section-title">Works</h2>
+    </div>
+
+    <!-- Filter -->
+    <div class="lang-filter reveal" data-reveal>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="c">C</button>
+      <button class="filter-btn" data-filter="python">Python</button>
+      <button class="filter-btn" data-filter="web">Web</button>
+    </div>
+
+    <div class="works-grid" id="works-grid">
+
+      <!-- C: terminal cards -->
+      <div class="work-card terminal-card" data-lang="c">
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+            <span class="terminal-filename">ft_printf.c</span>
+          </div>
+          <pre class="terminal-body">$ ./ft_printf
+Hello, 42 Tokyo!
+Value: 42 | Hex: 0x2a
+</pre>
+        </div>
+        <div class="card-body">
+          <p class="card-lang">C Language</p>
+          <h3 class="card-title">ft_printf</h3>
+          <p class="card-desc">標準ライブラリの printf を自前で実装。フォーマット指定子の解析から出力処理まで、ゼロから組み上げた。</p>
+          <div class="card-footer">
+            <a href="https://github.com/" target="_blank" class="github-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              GitHub →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-card terminal-card" data-lang="c">
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+            <span class="terminal-filename">libft.c</span>
+          </div>
+          <pre class="terminal-body">$ ./libft_test
+ft_strlen : OK
+ft_memcpy : OK
+ft_split  : OK
+</pre>
+        </div>
+        <div class="card-body">
+          <p class="card-lang">C Language</p>
+          <h3 class="card-title">libft</h3>
+          <p class="card-desc">C の標準ライブラリ関数群を自分で再実装したライブラリ。42 Tokyo Piscine での課題がもとになっている。</p>
+          <div class="card-footer">
+            <a href="https://github.com/" target="_blank" class="github-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              GitHub →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Python: image cards -->
+      <div class="work-card" data-lang="python">
+        <div class="card-img-wrap">
+          <img src="your-game1.jpg" alt="Python game screenshot" onerror="this.style.display='none'" />
+          <div class="card-img-placeholder">🎮</div>
+        </div>
+        <div class="card-body">
+          <p class="card-lang">Python</p>
+          <h3 class="card-title">Game Title</h3>
+          <p class="card-desc">Pythonで作ったゲームの説明をここに。pygame / tkinter などを使ったゲームを掲載予定。</p>
+          <div class="card-footer">
+            <a href="https://github.com/" target="_blank" class="github-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              GitHub →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-card" data-lang="python">
+        <div class="card-img-wrap">
+          <img src="your-game2.jpg" alt="Python game screenshot" onerror="this.style.display='none'" />
+          <div class="card-img-placeholder">🐍</div>
+        </div>
+        <div class="card-body">
+          <p class="card-lang">Python</p>
+          <h3 class="card-title">Game Title 2</h3>
+          <p class="card-desc">Pythonで作った別のゲームの説明をここに。</p>
+          <div class="card-footer">
+            <a href="https://github.com/" target="_blank" class="github-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              GitHub →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web / Portfolio -->
+      <div class="work-card" data-lang="web">
+        <div class="card-img-wrap">
+          <img src="your-portfolio-screenshot.jpg" alt="Portfolio screenshot" onerror="this.style.display='none'" />
+          <div class="card-img-placeholder">🌐</div>
+        </div>
+        <div class="card-body">
+          <p class="card-lang">HTML / CSS / JS</p>
+          <h3 class="card-title">このポートフォリオ</h3>
+          <p class="card-desc">ノームコアをベースに、ポイントで個性を入れたポートフォリオサイト。HTML・CSS・JSのみで構築。</p>
+          <div class="card-footer">
+            <a href="https://github.com/" target="_blank" class="github-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              GitHub →
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Portfolio — All rights reserved</p>
+    <div class="footer-dot"></div>
+    <p>Made with care</p>
+  </footer>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button, .work-card, .exp-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('[data-reveal]');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: .08 });
+    reveals.forEach(el => io.observe(el));
+
+    // Filter
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.work-card');
+    const grid = document.getElementById('works-grid');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        cards.forEach(c => {
+          if (f === 'all' || c.dataset.lang === f) {
+            delete c.dataset.hidden;
+          } else {
+            c.dataset.hidden = '';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
